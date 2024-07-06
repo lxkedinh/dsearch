@@ -16,7 +16,7 @@ import (
 var startDir, searchPath string
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:     "dsearch path",
 	Short:   "dsearch is a Go CLI application to quickly fuzzy search your system.",
 	Long:    `dsearch is a Go CLI application to quickly fuzzy search your system.`,
@@ -26,6 +26,8 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(startDir)
 
 		filepath.WalkDir(startDir, func(path string, d fs.DirEntry, err error) error {
 			if fs.DirEntry.IsDir(d) {
@@ -68,13 +70,17 @@ func ValidateStartDir(startDir string) error {
 	if errors.Is(err, fs.ErrNotExist) || !fileInfo.IsDir() {
 		return errors.New("invalid starting directory given")
 	}
+
+	// change file path to use "/" instead of "\" separator to work regardless of OS
+	startDir = filepath.ToSlash(startDir)
+
 	return nil
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -90,5 +96,5 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().StringVarP(&startDir, "dir", "d", ".", "Starting directory to start fuzzy searching from (defaults to current directory)")
+	RootCmd.Flags().StringVarP(&startDir, "dir", "d", ".", "Starting directory to start fuzzy searching from (defaults to current directory)")
 }
