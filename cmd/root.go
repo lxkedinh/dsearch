@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"path/filepath"
 
+	"github.com/lxkedinh/dsearch/search"
 	"github.com/spf13/cobra"
 )
 
-var startDir, searchPath string
+var startDir, searchQuery string
+var fuzzyThreshold float64
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -21,20 +22,24 @@ var RootCmd = &cobra.Command{
 	Short:   "dsearch is a Go CLI application to quickly fuzzy search your system.",
 	Long:    `dsearch is a Go CLI application to quickly fuzzy search your system.`,
 	Aliases: []string{"ds"},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		err := ValidateStartDir(startDir)
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		err := ValidateFlags()
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(startDir)
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		results, err := search.FuzzySearch(startDir, searchQuery, fuzzyThreshold)
+		if err != nil {
+			fmt.Printf("Unexpected error occurred. Try again.\nError: %v", err)
+			return err
+		}
 
-		filepath.WalkDir(startDir, func(path string, d fs.DirEntry, err error) error {
-			if fs.DirEntry.IsDir(d) {
-				fmt.Println(d)
-			}
-			return nil
-		})
+		for _, result := range results {
+			fmt.Printf("- %s\n", result)
+		}
 
 		return nil
 	},
@@ -42,26 +47,36 @@ var RootCmd = &cobra.Command{
 	Args: ValidateArgs,
 }
 
-func ValidateArgs(cmd *cobra.Command, args []string) error {
-	switch len(args) {
-	case 1:
-		err := ValidateSearchPath(args[0])
-		if err != nil {
-			return err
-		}
-	default:
-		return errors.New("incorrect arguments, only 1 argument for desired search path")
+func ValidateFlags() error {
+	err := ValidateStartDir(startDir)
+	if err != nil {
+		return err
+	}
+
+	err = ValidateFuzzyThreshold(fuzzyThreshold)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func ValidateSearchPath(p string) error {
-	path, err := filepath.Abs(p)
-	if err != nil {
-		return errors.New("invalid file path given for fuzzy searching")
+func ValidateFuzzyThreshold(threshold float64) error {
+	if fuzzyThreshold < 0.0 || fuzzyThreshold > 1.0 {
+		return errors.New("invalid threshold value, must be between 0.0 and 1.0")
 	}
-	searchPath = path
+
+	return nil
+}
+
+func ValidateArgs(cmd *cobra.Command, args []string) error {
+	switch len(args) {
+	case 1:
+		searchQuery = args[0]
+	default:
+		return errors.New("incorrect arguments, only 1 argument for search query")
+	}
+
 	return nil
 }
 
@@ -70,9 +85,6 @@ func ValidateStartDir(startDir string) error {
 	if errors.Is(err, fs.ErrNotExist) || !fileInfo.IsDir() {
 		return errors.New("invalid starting directory given")
 	}
-
-	// change file path to use "/" instead of "\" separator to work regardless of OS
-	startDir = filepath.ToSlash(startDir)
 
 	return nil
 }
@@ -97,4 +109,5 @@ func init() {
 	// when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	RootCmd.Flags().StringVarP(&startDir, "dir", "d", ".", "Starting directory to start fuzzy searching from (defaults to current directory)")
+	RootCmd.Flags().Float64VarP(&fuzzyThreshold, "threshold", "t", 0.5, "Threshold to determine strictness of fuzzy matching (allows values from 0.0 to 1.0)")
 }

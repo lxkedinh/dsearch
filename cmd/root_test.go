@@ -25,22 +25,14 @@ func TestNumArguments(t *testing.T) {
 			switch len(test.args) {
 			case 0, 2:
 				if err == nil {
-					t.Fatalf("Test for calling dsearch with 0 or more than 1 arguments failed. Expected error but none caught.\nArgs: %v", test.args)
+					t.Fatalf("Test for calling dsearch with 0 or more than 1 arguments failed. Expected error but none caught.\nArgs: %v\n", test.args)
 				}
 			case 1:
 				if err != nil {
-					t.Fatalf("test for calling dsearch with 1 argument failed.\nArgs: %v\nError: %v", test.args, err)
+					t.Fatalf("test for calling dsearch with 1 argument failed.\nArgs: %v\nError: %v\n", test.args, err)
 				}
 			}
 		})
-	}
-}
-
-func TestSearchPathValidation(t *testing.T) {
-	path := "foobar"
-	err := cmd.ValidateSearchPath(path)
-	if err != nil {
-		t.Fatalf("Validating search path test failed\nPath: \"%s\"\nError: %v", path, err)
 	}
 }
 
@@ -49,6 +41,33 @@ func TestInvalidStartDir(t *testing.T) {
 	fmt.Println(os.Executable())
 	err := cmd.ValidateStartDir(startDir)
 	if err == nil {
-		t.Fatalf("Invalid starting directory test did not catch expected error:\nDir: %s", startDir)
+		t.Fatalf("Invalid starting directory test did not catch expected error:\nDir: %s\n", startDir)
+	}
+}
+
+var fuzzyThresholdTests = []struct {
+	name      string
+	threshold float64
+}{
+	{"valid", 0.7},
+	{"invalid negative", -1.4},
+	{"invalid positive", 1.3},
+}
+
+func TestInvalidFuzzyThreshold(t *testing.T) {
+	for _, test := range fuzzyThresholdTests {
+		t.Run(test.name, func(t *testing.T) {
+			err := cmd.ValidateFuzzyThreshold(test.threshold)
+			switch test.name {
+			case "valid":
+				if err != nil {
+					t.Fatalf("Test with valid fuzzy threshold input failed.\nError: %v\n", err)
+				}
+			case "default":
+				if err == nil {
+					t.Fatalf("\"%s\" fuzzy threshold test failed. Did not error like expected\n", test.name)
+				}
+			}
+		})
 	}
 }
