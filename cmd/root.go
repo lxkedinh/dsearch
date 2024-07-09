@@ -31,14 +31,14 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		results, err := search.FuzzySearch(startDir, searchQuery, fuzzyThreshold)
+		results, err := search.Fuzzy(startDir, searchQuery, fuzzyThreshold)
 		if err != nil {
 			fmt.Printf("Unexpected error occurred. Try again.\nError: %v", err)
 			return err
 		}
 
 		for _, result := range results {
-			fmt.Printf("- %s\n", result)
+			fmt.Printf("• %s\n", result)
 		}
 
 		return nil

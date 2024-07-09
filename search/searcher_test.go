@@ -21,7 +21,7 @@ func TestFuzzyDirSearch(t *testing.T) {
 	for _, test := range fuzzySearchTests {
 		testName := fmt.Sprintf("fuzzy search %s test", test.name)
 		t.Run(testName, func(t *testing.T) {
-			results, err := search.FuzzySearch(test.startDir, test.query, 0.5)
+			results, err := search.Fuzzy(test.startDir, test.query, 0.5)
 			if err != nil {
 				t.Fatalf("%s failed.\nError: %v", testName, err)
 			}
