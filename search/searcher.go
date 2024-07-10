@@ -6,13 +6,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/TwiN/go-color"
 	"github.com/avito-tech/normalize"
+	"github.com/fatih/color"
 )
 
 func Fuzzy(startDir string, query string, fuzzyThreshold float64) ([]string, error) {
 	results := []string{}
 	strBuilder := strings.Builder{}
+	green := color.New(color.FgGreen).SprintFunc()
 
 	err := filepath.WalkDir(startDir, func(path string, d fs.DirEntry, err error) error {
 		fileName := d.Name()
@@ -20,7 +21,7 @@ func Fuzzy(startDir string, query string, fuzzyThreshold float64) ([]string, err
 		if normalize.AreStringsSimilar(trimmedfileName, query, float64(fuzzyThreshold)) {
 			strBuilder.WriteString(path)
 			strBuilder.WriteRune(os.PathSeparator)
-			strBuilder.WriteString(color.With(color.Yellow, fileName))
+			strBuilder.WriteString(green(fileName))
 			results = append(results, strBuilder.String())
 			strBuilder.Reset()
 		}

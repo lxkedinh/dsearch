@@ -10,11 +10,13 @@ import (
 	"os"
 
 	"github.com/lxkedinh/dsearch/search"
+	"github.com/lxkedinh/dsearch/spinner"
 	"github.com/spf13/cobra"
 )
 
 var startDir, searchQuery string
 var fuzzyThreshold float64
+var progressIndicator = spinner.New()
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -31,7 +33,9 @@ var RootCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		progressIndicator.Start()
 		results, err := search.Fuzzy(startDir, searchQuery, fuzzyThreshold)
+		progressIndicator.Stop()
 		if err != nil {
 			fmt.Printf("Unexpected error occurred. Try again.\nError: %v", err)
 			return err
