@@ -26,8 +26,8 @@
     <a href="https://github.com/lxkedinh/dsearch"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/lxkedinh/dsearch">View Demo</a>
-    ·
+    <!-- <a href="https://github.com/lxkedinh/dsearch">View Demo</a> -->
+    <!-- · -->
     <a href="https://github.com/lxkedinh/dsearch/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
     <a href="https://github.com/lxkedinh/dsearch/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
@@ -46,12 +46,16 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
+      <!-- <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+      </ul> -->
+    </li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#flags">Flags</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <!-- <li><a href="#contributing">Contributing</a></li> -->
     <li><a href="#license">License</a></li>
@@ -64,9 +68,10 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `lxkedinh`, `dsearch`, `twitter_handle`, `lxkedinh`, `email_client`, `lukexdinh@gmail.com`, `project_title`, `project_description`
+This is a small passion project of mine I made to learn Go! It's a small CLI application that
+fuzzy searches directories for files.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -83,21 +88,19 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+You can get started with dsearch by downloading the latest release on the right sidebar for your
+platform.
 
-### Prerequisites
+<!-- ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
 
 - npm
   ```sh
   npm install npm@latest -g
-  ```
+  ``` -->
 
-### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
+<!-- 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
    git clone https://github.com/lxkedinh/dsearch.git
@@ -109,7 +112,7 @@ This is an example of how to list things you need to use the software and how to
 4. Enter your API in `config.js`
    ```js
    const API_KEY = "ENTER YOUR API";
-   ```
+   ``` -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -117,9 +120,23 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+dsearch only requires one argument, your search query, such as:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+```sh
+dsearch foo
+```
+
+to fuzzy search for "foo".
+
+### Flags
+
+- `-d` or `--dir`: specify the directory to start fuzzy searching in
+  - defaults to current directory where command was called from
+- `-t` or `--threshold`: the threshold to determine strictness of fuzzy matching
+  - allowed range (lowest to highest strictness): 0.0 to 1.0
+  - defaults to 0.5
+
+<!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -127,10 +144,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 ## Roadmap
 
-- [ ] asdf
-- [ ] Feature 2
-- [ ] Feature 3
-  - [ ] Nested Feature
+- [ ] Look into searching in parallel, learn channels and goroutines for concurrency
 
 See the [open issues](https://github.com/lxkedinh/dsearch/issues) for a full list of proposed features (and known issues).
 
@@ -157,7 +171,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
